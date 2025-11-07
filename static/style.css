@@ -1,0 +1,202 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f5fff7;
+  color: #222;
+  transition: background 0.3s, color 0.3s;
+}
+
+.navbar {
+  background: linear-gradient(90deg, #0f9b0f, #4caf50);
+  color: white;
+}
+
+button, .btn {
+  border-radius: 10px;
+  transition: transform 0.2s;
+}
+
+button:hover, .btn:hover {
+  transform: scale(1.05);
+}
+
+.card {
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.dark {
+  background: #121212;
+  color: #eee;
+}
+
+.dark .card {
+  background: #1e1e1e;
+  color: #fff;
+}
+
+.btn-green {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-green:hover {
+  background: #43a047;
+}
+
+/* 🌿 EcoBot floating mascot */
+#ecoBot {
+  position: fixed;
+  bottom: 100px;
+  right: 40px;
+  width: 120px;
+  animation: floaty 4s ease-in-out infinite;
+  z-index: 9999;
+  cursor: pointer;
+}
+
+@keyframes floaty {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0); }
+}
+
+.ecoBubble {
+  position: fixed;
+  bottom: 200px;
+  right: 60px;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 10px 15px;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  font-size: 14px;
+  max-width: 250px;
+  animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* 🤖 EcoBot personality & animation */
+#ecoBot {
+  position: fixed;
+  bottom: 100px;
+  right: 40px;
+  width: 120px;
+  animation: floaty 4s ease-in-out infinite;
+  z-index: 9999;
+  cursor: pointer;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+/* Hover glow */
+#ecoBot:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 12px #4caf50);
+}
+
+/* Happy pulse */
+.happyPulse {
+  animation: pulse 0.8s ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 0px #4caf50); }
+  50% { transform: scale(1.15); filter: drop-shadow(0 0 12px #4caf50); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 0px #4caf50); }
+}
+
+/* EcoBot speech bubble */
+.ecoBubble {
+  position: fixed;
+  bottom: 200px;
+  right: 60px;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 10px 15px;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  font-size: 14px;
+  max-width: 250px;
+  animation: slideIn 0.4s ease, fadeOut 0.5s ease 3.5s forwards;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateY(10px); }
+}
+
+/* 🌟 EcoBot Celebration Animation */
+@keyframes celebrateIn {
+  0% { transform: translateY(100px) scale(0.8); opacity: 0; }
+  50% { transform: translateY(-20px) scale(1.2); opacity: 1; }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes bounceHappy {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+#ecoBot.celebrate {
+  animation: celebrateIn 0.8s ease, bounceHappy 1s ease 0.8s 2 alternate;
+  filter: drop-shadow(0 0 15px #00e676);
+}
+/* 🌿 Floating EcoBot */
+#ecoBotContainer {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 999;
+}
+
+#ecoBotHome {
+  width: 100px;
+  height: auto;
+  animation: float 3s ease-in-out infinite, wave 2s ease-in-out infinite alternate;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+#ecoBotHome:hover {
+  transform: scale(1.1);
+}
+
+/* Floating up and down motion */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Gentle waving motion */
+@keyframes wave {
+  0% { rotate: 0deg; }
+  100% { rotate: 10deg; }
+}
+
+/* Message bubble */
+#ecoBotMessage {
+  background-color: #00e676;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  opacity: 0;
+  transition: opacity 0.5s;
+}
