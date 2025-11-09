@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
   mascot.style.boxShadow = "0 4px 10px rgba(0,0,0,0.2)";
   mascot.style.animation = "float 3s ease-in-out infinite";
   document.body.appendChild(mascot);
+  
  // 🌟 EcoBot Celebration with Random Messages
 document.addEventListener('wasteReported', () => {
   const messages = [
@@ -121,3 +122,30 @@ function showEcoTip(message) {
   setTimeout(() => tip.style.opacity = '0', 2000);
   setTimeout(() => tip.remove(), 2500);
 }
+
+
+// Dark Mode Toggle
+document.addEventListener("DOMContentLoaded", function () {
+  const toggle = document.getElementById("darkModeToggle");
+  const body = document.body;
+
+  // Check saved mode in localStorage
+  if (localStorage.getItem("theme") === "dark") {
+    body.classList.add("dark-mode");
+    if (toggle) toggle.textContent = "☀️ Light Mode";
+  }
+
+  if (toggle) {
+    toggle.addEventListener("click", function () {
+      body.classList.toggle("dark-mode");
+
+      if (body.classList.contains("dark-mode")) {
+        localStorage.setItem("theme", "dark");
+        toggle.textContent = "☀️ Light Mode";
+      } else {
+        localStorage.setItem("theme", "light");
+        toggle.textContent = "🌙 Dark Mode";
+      }
+    });
+  }
+});
