@@ -3,6 +3,7 @@ body {
   background: hsl(143, 72%, 79%); 
   color: hsl(0, 29%, 97%);
   transition: background 0.3s, color 0.3s;
+  background-image: image('Earth.jpeg');
 }
 
 .navbar {
@@ -81,7 +82,7 @@ button:hover, .btn:hover {
 
 /* --- Cards --- */
 .card {
-  background: rgb(236, 244, 237);
+  background: rgb(208, 245, 212);
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -151,7 +152,7 @@ form select {
   width: 100%;
   padding: 0.8rem;
   margin: 0.5rem 0 1rem;
-  border: 1px solid #ccc;
+  border: 1px solid #0a6c07;
   border-radius: 10px;
   font-size: 1rem;
 }
