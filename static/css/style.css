@@ -1,13 +1,16 @@
 body {
   font-family: 'TT Fellows', sans-serif;
   background: hsl(143, 72%, 79%); 
-  color: hsl(0, 29%, 97%);
   transition: background 0.3s, color 0.3s;
   background-image: image('Earth.jpeg');
 }
 
+a{
+  text-decoration: none;
+}
+
 .navbar {
-   background: #2ecc71;
+  background: #2ecc71;
   color: white;
   padding: 1rem 2rem;
   display: flex;
@@ -107,7 +110,7 @@ button:hover, .btn:hover {
 /* --- Buttons --- */
 button,
 .btn {
-  background: #27ae60;
+  background: #4caf50;
   color: rgb(91, 73, 225);
   border: none;
   padding: 0.6rem 1.2rem;
@@ -247,11 +250,6 @@ body.dark {
 .dark .card {
   background: #1e1e1e;
   color: hsl(34, 96%, 51%);
-}
-
-.btn-green {
-  background: #4caf50;
-  color: rgb(77, 10, 128);
 }
 
 .btn-green:hover {
