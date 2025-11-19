@@ -1,8 +1,9 @@
 import os
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
+from waste_predictor import create_predictor
 
 # --- SETUP APP ---
 app = Flask(__name__)
@@ -26,6 +27,14 @@ app.config["MAIL_DEFAULT_SENDER"] = "your_email@gmail.com"
 db = SQLAlchemy(app)
 mail = Mail(app)
 
+# --- AI PRIORITY PREDICTOR ---
+try:
+    predictor = create_predictor('models/waste_priority_model.pth')
+    print("✅ AI Priority Classifier loaded successfully!")
+except Exception as e:
+    print(f"⚠️ Warning: Could not load AI model: {e}")
+    predictor = None
+
 # --- DATABASE MODEL ---
 class WasteReport(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -38,6 +47,13 @@ class WasteReport(db.Model):
     image_path = db.Column(db.String(300))
     status = db.Column(db.String(20), default="Pending")
     date_reported = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # AI-generated fields
+    priority = db.Column(db.String(20), default="Secondary")  # Critical, Urgent, Important, Secondary
+    priority_color = db.Column(db.String(20), default="blue")
+    waste_type = db.Column(db.String(50), default="general")
+    confidence = db.Column(db.Float, default=0.0)
+    ai_solutions = db.Column(db.Text)  # JSON string of solution suggestions
 
 # --- HOME PAGE ---
 @app.route("/")
@@ -63,6 +79,7 @@ def report():
             image_filename = None
             image_path = None
 
+        # Create initial report
         report = WasteReport(
             name=name, email=email, phone=phone,
             location=location, description=description,
@@ -70,6 +87,22 @@ def report():
         )
         db.session.add(report)
         db.session.commit()
+        
+        # --- AI PRIORITY CLASSIFICATION ---
+        if predictor and image_path:
+            try:
+                prediction = predictor.predict(image_path, description)
+                report.priority = prediction['priority']
+                report.priority_color = prediction['color']
+                report.waste_type = prediction['waste_type']
+                report.confidence = prediction['confidence']
+                report.ai_solutions = ','.join(prediction['solutions'])
+                report.status = 'Pending'  # Auto-set to Pending after AI analysis
+                db.session.commit()
+                print(f"✅ AI classified report as {prediction['priority']} priority")
+            except Exception as e:
+                print(f"⚠️ AI classification failed: {e}")
+                # Continue without AI classification
 
         # --- EMAIL ALERT ---
         try:
@@ -94,17 +127,68 @@ def success():
 # --- ADMIN DASHBOARD ---
 @app.route("/admin")
 def admin():
-    reports = WasteReport.query.order_by(WasteReport.date_reported.desc()).all()
-    return render_template("admin.html", reports=reports)
+    # Order by priority: Critical -> Urgent -> Important -> Secondary
+    priority_order = {
+        'Critical': 1,
+        'Urgent': 2,
+        'Important': 3,
+        'Secondary': 4
+    }
+    
+    reports = WasteReport.query.all()
+    # Sort by priority first, then by date (newest first)
+    reports_sorted = sorted(
+        reports,
+        key=lambda r: (priority_order.get(r.priority, 5), -r.date_reported.timestamp())
+    )
+    
+    return render_template("admin.html", reports=reports_sorted)
 
 # --- UPDATE STATUS ---
 @app.route("/update_status/<int:report_id>/<status>")
 def update_status(report_id, status):
     report = WasteReport.query.get_or_404(report_id)
     report.status = status
-    db.session.commit()
-    flash(f"Status updated to {status}!", "info")
+    
+    # If marked as resolved, remove from active list (or you can delete)
+    if status == "Resolved":
+        # Option 1: Delete the report
+        # db.session.delete(report)
+        # Option 2: Keep it but mark as resolved (current implementation)
+        db.session.commit()
+        flash(f"Report #{report_id} marked as resolved!", "success")
+    else:
+        db.session.commit()
+        flash(f"Status updated to {status}!", "info")
+    
     return redirect(url_for("admin"))
+
+# --- GET REPORT DETAILS (API for AJAX) ---
+@app.route("/api/report/<int:report_id>")
+def get_report_details(report_id):
+    """API endpoint to get full report details including AI suggestions"""
+    report = WasteReport.query.get_or_404(report_id)
+    
+    solutions = []
+    if report.ai_solutions:
+        solutions = report.ai_solutions.split(',')
+    
+    return jsonify({
+        'id': report.id,
+        'name': report.name,
+        'email': report.email,
+        'phone': report.phone,
+        'location': report.location,
+        'description': report.description,
+        'priority': report.priority,
+        'priority_color': report.priority_color,
+        'waste_type': report.waste_type,
+        'confidence': report.confidence,
+        'solutions': solutions,
+        'status': report.status,
+        'date_reported': report.date_reported.strftime('%Y-%m-%d %H:%M:%S'),
+        'image_url': url_for('static', filename=f'uploads/{report.image_filename}') if report.image_filename else None
+    })
 
 if __name__ == "__main__":
     with app.app_context():
