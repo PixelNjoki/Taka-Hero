@@ -1,0 +1,57 @@
+    <canvas id="reportChart" height="100"></canvas>
+
+    <!-- Reports List -->
+    <div class="reports-list" style="margin-top:30px;">
+      {% for report in reports %}
+      <div class="report-item" data-status="{{ report.status }}" style="border:1px solid #ddd; border-radius:10px; margin-bottom:20px; padding:15px; display:flex; gap:20px; align-items:flex-start;">
+        
+        <!-- Image -->
+        <div style="flex:0 0 200px;">
+          <img src="{{ url_for('static', filename='uploads/' + (report.image_filename or 'placeholder.jpg')) }}" 
+               style="width:100%; border-radius:10px;">
+        </div>
+
+        <!-- Report Details -->
+        <div style="flex:1;">
+          <p><b>Description:</b> {{ report.description }}</p>
+          <p><b>Waste Type:</b> {{ report.waste_type }}</p>
+
+          <!-- Priority with color badge -->
+          <span style="display:inline-block; 
+                       background-color: {{ report.priority_color }};
+                       color:white; 
+                       padding:5px 12px; 
+                       border-radius:12px; 
+                       font-weight:bold;">
+            {{ report.priority }}
+          </span>
+
+          <!-- Status badge -->
+          <span style="display:inline-block; 
+                       margin-left:10px;
+                       background: {% if report.status == 'Pending' %}#ffc107{% elif report.status == 'Verified' %}#4caf50{% else %}#2196f3{% endif %};
+                       color:white; 
+                       padding:5px 12px; 
+                       border-radius:12px;">
+            {{ report.status }}
+          </span>
+
+          <!-- AI Solutions -->
+          {% if report.ai_solutions %}
+          <p style="margin-top:10px;"><b>AI Solutions:</b> {{ report.ai_solutions }}</p>
+          {% endif %}
+
+          <!-- Actions -->
+          <div class="mt-2">
+            <a href="{{ url_for('update_status', report_id=report.id, status='Verified') }}" class="btn btn-green btn-sm">Verify</a>
+            <a href="{{ url_for('update_status', report_id=report.id, status='Collected') }}" class="btn btn-outline-dark btn-sm">Mark Collected</a>
+          </div>
+
+          <!-- Date -->
+          <p style="margin-top:10px; font-size:0.9em; color:#666;">
+            Reported on {{ report.date_reported.strftime('%Y-%m-%d %H:%M:%S') }}
+          </p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
