@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Success | Taka Hero</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+  <div class="container text-center" style="margin-top: 100px;">
+    <h1>✅ Thank You!</h1>
+    <p>Your report has been successfully submitted.</p>
+
+    <img src="{{ url_for('static', filename='img/Earth Thumbs Up.jpeg') }}" alt="Success" style="width:300px; border-radius:15px;">
+
+    <div style="margin-top: 30px;">
+      <a href="{{ url_for('report') }}" class="btn btn-green">📸 Report Another</a>
+      <a href="{{ url_for('index') }}" class="btn btn-outline-dark">🏠 Go Home</a>
+    </div>
+  </div>
+</body>
+</html>

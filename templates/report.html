@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Report Waste | Taka Hero</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+  <nav class="navbar p-3">
+    <h2>Taka Hero</h2>
+    <button id="darkToggle" class="btn btn-outline-light">🌙</button>
+  </nav>
+
+  <div class="container" style="max-width: 600px; margin: 40px auto;">
+    <h2 class="text-center">📸 Report Waste</h2>
+
+<!--    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+-->
+
+    <form id="reportForm" method="POST" enctype="multipart/form-data">
+      <label>Name:</label>
+      <input type="text" name="name" class="form-control" required>
+
+      <label>Email:</label>
+      <input type="email" name="email" class="form-control" required>
+
+      <label>Phone:</label>
+      <input type="text" name="phone" class="form-control" required>
+
+      <label>Location:</label>
+      <input type="text" name="location" class="form-control" required>
+
+      <label>Description:</label>
+      <textarea name="description" class="form-control" required></textarea>
+
+      <label>Upload Image:</label>
+      <input type="file" name="image" class="form-control">
+
+      <button type="submit" class="btn btn-green mt-3">Submit Report</button>
+    </form>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+  <script>
+  const reportForm = document.getElementById('reportForm');
+  reportForm.addEventListener('submit', (e) => {
+    setTimeout(() => {
+      // Trigger EcoBot celebration event
+      const event = new Event('wasteReported');
+      document.dispatchEvent(event);
+    }, 1000); // triggers slightly after submission
+  });
+</script>
+
+</body>
+</html>

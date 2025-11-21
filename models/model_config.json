@@ -1,0 +1,22 @@
+{
+  "priority_classes": [
+    "Critical",
+    "Urgent",
+    "Important",
+    "Secondary"
+  ],
+  "priority_colors": {
+    "Critical": "red",
+    "Urgent": "orange",
+    "Important": "black",
+    "Secondary": "blue"
+  },
+  "model_type": "MultiModalPriorityClassifier",
+  "image_model": "efficientnet_b0",
+  "text_model": "distilbert-base-uncased",
+  "input_size": [
+    224,
+    224
+  ],
+  "max_text_length": 128
+}

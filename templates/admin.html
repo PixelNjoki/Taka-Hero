@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Taka Hero</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+  <nav class="navbar p-3">
+    <h2>Taka Hero Admin</h2>
+    <button id="darkToggle" class="btn btn-outline-light">🌙</button>
+  </nav>
+
+  <div class="container" style="padding: 20px;">
+    <h2>📊 Reports Overview</h2>
+
+    <div style="margin-bottom: 20px;">
+     <label>Filter Reports:</label>
+     <select id="statusFilter" class="form-control">
+  	<option value="all" {% if selected_status == 'all' %}selected{% endif %}>All</option>
+  	<option value="Pending" {% if selected_status == 'Pending' %}selected{% endif %}>Pending</option>
+  	<option value="Verified" {% if selected_status == 'Verified' %}selected{% endif %}>Verified</option>
+  	<option value="Collected" {% if selected_status == 'Collected' %}selected{% endif %}>Collected</option>
+     </select>
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+  	<h3>Total Reports: {{ all_reports|length }}</h3>
+    </div>
+
+        <canvas id="reportChart" height="100"></canvas>
+	<div class="reports-list" style="margin-top:30px;">
+  {% for report in reports %}
+  <div class="report-item" data-status="{{ report.status }}">
+<!--  <div class="report-item" data-status="{{ report.status }}"
+	style="width:100%; max-width:1200px; height:270px; display:flex; gap:20px; margin-bottom:20px; padding:15px; border:1px solid #ddd; border-radius:10px; align-items:center;">-->
+<!--
+	====================================================================================
+	mobile response
+	====================================================================================
+
+  <div class="image-container">
+    <img src="{{ url_for('static', filename='uploads/' + (report.image_filename or 'placeholder.jpg')) }}">
+  </div>
+  <div class="details">
+    <p><b>Description:</b> {{ report.description }}</p>
+    <p><b>Waste Type:</b> {{ report.waste_type }}</p>
+
+    <span style="display:inline-block; background-color:{{ report.priority_color }}; color:white; padding:5px 12px; border-radius:12px; font-weight:bold;">
+      {{ report.priority }}
+    </span>
+
+    <span style="display:inline-block; margin-left:10px; background: {% if report.status == 'Pending' %}#ffc107{% elif report.status == 'Verified' %}#4caf50{% else %}#2196f3{% endif %}; color:white; padding:5px 12px; border-radius:12px;">
+      {{ report.status }}
+    </span>
+
+    {% if report.ai_solutions %}
+    <p style="margin-top:10px;"><b>AI Solutions:</b> {{ report.ai_solutions }}</p>
+    {% endif %}
+
+    <div class="mt-2">
+      <a href="{{ url_for('update_status', report_id=report.id, status='Verified') }}" class="btn btn-green btn-sm">Verify</a>
+      <a href="{{ url_for('update_status', report_id=report.id, status='Collected') }}" class="btn btn-outline-dark btn-sm">Mark Collected</a>
+    </div>
+
+    <p style="margin-top:10px; font-size:0.9em; color:#666;">
+      Reported on {{ report.date_reported.strftime('%Y-%m-%d %H:%M:%S') }}
+    </p>
+  </div>
+</div>
+
+	======================================================================================
+	end of mobile response part
+	=======================================================================================
+-->
+<!--
+	=======================================================================================
+	working part
+	=======================================================================================
+-->
+    <!-- Image Container -->
+    <div style="flex:0 0 250px; height:100%; display:flex; align-items:center; justify-content:center;">
+      <img src="{{ url_for('static', filename='uploads/' + (report.image_filename or 'placeholder.jpg')) }}"
+           style="max-height:100%; max-width:100%; object-fit:contain; border-radius:10px;">
+    </div>
+
+    <!-- Report Details -->
+    <div style="flex:1;">
+      <p><b>Description:</b> {{ report.description }}</p>
+      <p><b>Waste Type:</b> {{ report.waste_type }}</p>
+
+      <!-- Priority Badge -->
+      <span style="display:inline-block; background-color:{{ report.priority_color }}; color:white; padding:5px 12px; border-radius:12px; font-weight:bold;">
+        {{ report.priority }}
+      </span>
+
+      <!-- Status Badge -->
+      <span style="display:inline-block; margin-left:10px; background: {% if report.status == 'Pending' %}#ffc107{% elif report.status == 'Verified' %}#4caf50{% else %}#2196f3{% endif %}; color:white; padding:5px 12px; border-radius:12px;">
+        {{ report.status }}
+      </span>
+
+      <!-- AI Solutions -->
+      {% if report.ai_solutions %}
+      <p style="margin-top:10px;"><b>AI Solutions:</b> {{ report.ai_solutions }}</p>
+      {% endif %}
+
+      <!-- Actions -->
+      <div class="mt-2">
+        <a href="{{ url_for('update_status', report_id=report.id, status='Verified') }}" class="btn btn-green btn-sm">Verify</a>
+        <a href="{{ url_for('update_status', report_id=report.id, status='Collected') }}" class="btn btn-outline-dark btn-sm">Mark Collected</a>
+      </div>
+
+      <!-- Timestamp -->
+      <p style="margin-top:10px; font-size:0.9em; color:#666;">
+        Reported on {{ report.date_reported.strftime('%Y-%m-%d %H:%M:%S') }}
+      </p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<!--
+	==============================================================================
+	end of working part
+	==============================================================================
+-->
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script>
+    // Filter dropdown
+  const filter = document.getElementById('statusFilter');
+  filter.addEventListener('change', () => {
+    const selected = filter.value;
+    window.location.href = `/admin?status=${selected}`;
+  });
+
+
+    // Chart.js setup
+  const ctx = document.getElementById('reportChart').getContext('2d');
+  const chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Pending', 'Verified', 'Collected'],
+      datasets: [{
+        label: 'Number of Reports',
+        data: [
+          {{ all_reports|selectattr('status', 'equalto', 'Pending')|list|length }},
+          {{ all_reports|selectattr('status', 'equalto', 'Verified')|list|length }},
+          {{ all_reports|selectattr('status', 'equalto', 'Collected')|list|length }}
+        ],
+        backgroundColor: ['#ffc107','#4caf50','#2196f3']
+      }]
+    }
+  });
+</script>
+</body>
+</html>
