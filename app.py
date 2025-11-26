@@ -3,7 +3,6 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
-#from waste_predictor import create_predictor
 from model_components import WastePriorityPredictor
 
 # --- SETUP APP ---
